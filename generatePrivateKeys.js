@@ -7,6 +7,7 @@ function sha256(words) {
   return crypto.createHash("sha256").update(words, "hex").digest("hex");
 }
 
+// TODO:
 function generateMnemonic() {
   const mnemonic = bip39.generateMnemonic();
   //   console.log("[+] Mnemonic: ", mnemonic);

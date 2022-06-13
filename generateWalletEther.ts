@@ -29,7 +29,7 @@ async function encryptWallet(mnemonic: string) {
   return encryptWallet;
 }
 
-function createWalletFromJson(json: any, password: string) {
+function decryptWallet(json: any, password: string) {
   const wallet = ethers.Wallet.fromEncryptedJsonSync(json, password);
 
   console.log("[+] private key:", wallet.privateKey);
@@ -45,5 +45,5 @@ function createWalletFromJson(json: any, password: string) {
   // console.log(JSON.parse(walletJson));
   // //
   // const walletJson = await encryptWallet(mnemonic);
-  // createWalletFromJson(walletJson, password);
+  // decryptWallet(walletJson, password);
 })();
