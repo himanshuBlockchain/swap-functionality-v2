@@ -45,5 +45,6 @@ function decryptWallet(json: any, password: string) {
   // console.log(JSON.parse(walletJson));
   // //
   // const walletJson = await encryptWallet(mnemonic);
+  // console.log(JSON.parse(walletJson));
   // decryptWallet(walletJson, password);
 })();
