@@ -98,7 +98,6 @@ export const returnOptimalTradeUsingSubraph = async (
   // console.log(await Promise.all(subgraphPromiseArr));
 
   for (const data of subgraphPromiseArr) {
-    console.log(data)
     if (allEdges.length === 0) allEdges = [...data.tokenPairs];
     else allEdges = [...allEdges, ...data.tokenPairs];
   }
@@ -439,7 +438,7 @@ export const returnOptimalTradeUsingSubraph = async (
   //   return final_results
   // }
 
-  let pathsWithPairAddress = await getPairsAddressesUsingPaths(available_paths);
+  // let pathsWithPairAddress = await getPairsAddressesUsingPaths(available_paths);
   // let total_supp_buy_fee = await getTotalSupplementaryBuyTax(available_paths, pathsWithPairAddress)
   // let total_supp_sell_fee = await getTotalSupplementarySellTax(available_paths, pathsWithPairAddress)
 
@@ -510,7 +509,7 @@ export const returnOptimalTradeUsingSubraph = async (
       const final_rate = token0PerToken1ForCurrentImpact[i];
       final_trade_data.push({
         path: available_paths[i],
-        pathPairs: pathsWithPairAddress[i],
+        // pathPairs: pathsWithPairAddress[i],
         pathSymbol: available_path_tokens_symbol[i],
         amounts: output_with_input_amount[i],
         output:
@@ -522,7 +521,8 @@ export const returnOptimalTradeUsingSubraph = async (
 
   await impacts();
 
-  final_trade_data = sortResults(final_trade_data, "priceImpact", true);
+  // final_trade_data = sortResults(final_trade_data, "priceImpact", true);
+  final_trade_data = sortResults(final_trade_data, "output", false);
 
   // console.log("available_paths",available_paths)
   // console.log("pathsWithPairAddress",pathsWithPairAddress)
@@ -648,7 +648,7 @@ async function resultFunction() {
   let xyz = await returnOptimalTradeUsingSubraph(
     "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
     "0xe9e7cea3dedca5984780bafc599bd69add087d56",
-    "20",
+    "2",
     true
   );
   console.log(xyz);

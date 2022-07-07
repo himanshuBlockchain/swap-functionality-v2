@@ -1,6 +1,6 @@
 import Web3 from "web3";
 
-import client from "./apolloClient";
+import client from "./apolloClientSushiSwap";
 import { gql } from "@apollo/client";
 
 import { BigNumber } from "bignumber.js";
@@ -12,9 +12,9 @@ import {
   multicall_abi,
   popularTokens,
   routerABI,
-} from "./factoryABI";
+} from "./factoryABI_Sushiswap";
 
-let multicall_address = "0x571aC2dF243FC6D8aF105f3A97c8C9cbDD80FB17"; //non-dependedt on chain
+let multicall_address = "0x571aC2dF243FC6D8aF105f3A97c8C9cbDD80FB17"; // In-Dependent on Chain
 
 export const returnOptimalTradeUsingSubraph = async (
   from: any,
@@ -37,14 +37,19 @@ export const returnOptimalTradeUsingSubraph = async (
     INSUFFICIENT_RESERVES,
   }
 
-  let router_addreess = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
-  let factoryaddress = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73";
+  // let router_addreess = "0x10ED43C718714eb63d5aA57B78B54704E256024E"; // Pancake Swap
+  // let factoryaddress = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"; // Pancake Swap
+
+  let router_addreess = "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F";
+  let factoryaddress = "0xc0aee478e3658e2610c5f7a4a2e1777ce9e4f2ac";
 
   let trade_status = TRADE_STATUS.SUCCESS;
 
   // const web3= new Web3(new Web3.providers.HttpProvider('https://bsc-dataseed.binance.org/'))
   const web3 = new Web3(
-    new Web3.providers.HttpProvider("https://bsc-dataseed1.ninicoin.io/")
+    new Web3.providers.HttpProvider(
+      "https://mainnet.infura.io/v3/681332a2c23a4ce8ac972bfbdfa75555"
+    )
   );
 
   // console.log(web3)
@@ -67,8 +72,7 @@ export const returnOptimalTradeUsingSubraph = async (
   allTokens.push(from, to);
   allTokens = [...new Set(allTokens)];
 
-  console.log(allTokens)
-
+  console.log(allTokens);
 
   let subgraphPromiseArr: any = [];
 
@@ -80,29 +84,26 @@ export const returnOptimalTradeUsingSubraph = async (
       subgraphPromiseArr.push(data);
       data = getPopularPairsData(allTokens[j], allTokens[i], "0", "0");
       subgraphPromiseArr.push(data);
-
     }
   }
 
   // console.log(getPopularPairsData)
   // console.log("subGraphPromiseArr",await Promise.all(subgraphPromiseArr));
-  
+
   subgraphPromiseArr = await Promise.all(subgraphPromiseArr);
   subgraphPromiseArr = subgraphPromiseArr.filter(
     (d: any) => d.tokenPairs.length !== 0
-    );
-    
-    console.log(subgraphPromiseArr)
+  );
+
+  console.log(subgraphPromiseArr);
 
   // subgraphPromiseArr =await Promise.all(subgraphPromiseArr)
   // console.log(await Promise.all(subgraphPromiseArr));
 
   for (const data of subgraphPromiseArr) {
-    console.log(data)
     if (allEdges.length === 0) allEdges = [...data.tokenPairs];
     else allEdges = [...allEdges, ...data.tokenPairs];
   }
-
 
   // console.log(allEdges)
 
@@ -125,7 +126,6 @@ export const returnOptimalTradeUsingSubraph = async (
   // console.log(allNodes)
   // console.log(allNodesSymbols)
   // console.log(allEdges)
-
 
   const return_paths = async (token0Sno: any, token1Sno: any) => {
     let v: any;
@@ -251,7 +251,7 @@ export const returnOptimalTradeUsingSubraph = async (
     [available_paths, available_path_tokens_symbol] = [[], []];
   }
 
-  console.log(available_paths)
+  console.log(available_paths);
 
   const getAmountsOut = async (paths: any, amount: any) => {
     let amounts: any = [];
@@ -439,7 +439,7 @@ export const returnOptimalTradeUsingSubraph = async (
   //   return final_results
   // }
 
-  let pathsWithPairAddress = await getPairsAddressesUsingPaths(available_paths);
+  // let pathsWithPairAddress = await getPairsAddressesUsingPaths(available_paths);
   // let total_supp_buy_fee = await getTotalSupplementaryBuyTax(available_paths, pathsWithPairAddress)
   // let total_supp_sell_fee = await getTotalSupplementarySellTax(available_paths, pathsWithPairAddress)
 
@@ -510,7 +510,7 @@ export const returnOptimalTradeUsingSubraph = async (
       const final_rate = token0PerToken1ForCurrentImpact[i];
       final_trade_data.push({
         path: available_paths[i],
-        pathPairs: pathsWithPairAddress[i],
+        // pathPairs: pathsWithPairAddress[i],
         pathSymbol: available_path_tokens_symbol[i],
         amounts: output_with_input_amount[i],
         output:
@@ -522,7 +522,8 @@ export const returnOptimalTradeUsingSubraph = async (
 
   await impacts();
 
-  final_trade_data = sortResults(final_trade_data, "priceImpact", true);
+  // final_trade_data = sortResults(final_trade_data, "priceImpact", true);
+  final_trade_data = sortResults(final_trade_data, "output", false);
 
   // console.log("available_paths",available_paths)
   // console.log("pathsWithPairAddress",pathsWithPairAddress)
@@ -644,14 +645,23 @@ async function resultFunction() {
   //   true
   // );
 
-
   let xyz = await returnOptimalTradeUsingSubraph(
-    "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
-    "0xe9e7cea3dedca5984780bafc599bd69add087d56",
-    "20",
+    "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "0x6b175474e89094c44da98b954eedeac495271d0f",
+    "2",
     true
   );
   console.log(xyz);
 }
 
 resultFunction();
+
+
+
+// export const popularTokens: any = [
+//   "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", //WETH
+//   "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2", //SUSHI
+//   "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", //USDC
+//   "0x6b175474e89094c44da98b954eedeac495271d0f", //DAI
+//   "0xdac17f958d2ee523a2206206994597c13d831ec7", //USDT
+// ];
