@@ -14,7 +14,7 @@ import {
   routerABI,
 } from "./factoryABI";
 
-let multicall_address = "0x571aC2dF243FC6D8aF105f3A97c8C9cbDD80FB17";
+let multicall_address = "0x571aC2dF243FC6D8aF105f3A97c8C9cbDD80FB17"; //non-dependedt on chain
 
 export const returnOptimalTradeUsingSubraph = async (
   from: any,
@@ -47,16 +47,28 @@ export const returnOptimalTradeUsingSubraph = async (
     new Web3.providers.HttpProvider("https://bsc-dataseed1.ninicoin.io/")
   );
 
+  // console.log(web3)
+
   const mutilcall_inst = new web3.eth.Contract(
     multicall_abi,
     multicall_address
   );
 
+  // console.log(mutilcall_inst)
+
   const FACTORY_INSTANCE = new web3.eth.Contract(factoryABI1, factoryaddress);
 
+  // console.log(FACTORY_INSTANCE)
+
   let allTokens = popularTokens;
+
+  // console.log(allTokens)
+
   allTokens.push(from, to);
   allTokens = [...new Set(allTokens)];
+
+  console.log(allTokens)
+
 
   let subgraphPromiseArr: any = [];
 
@@ -64,19 +76,34 @@ export const returnOptimalTradeUsingSubraph = async (
     for (let j = i + 1; j < allTokens.length; j++) {
       let data: any;
       data = getPopularPairsData(allTokens[i], allTokens[j], "0", "0");
+      // console.log("MyData",i,j,data)
       subgraphPromiseArr.push(data);
+      data = getPopularPairsData(allTokens[j], allTokens[i], "0", "0");
+      subgraphPromiseArr.push(data);
+
     }
   }
 
+  // console.log(getPopularPairsData)
+  // console.log("subGraphPromiseArr",await Promise.all(subgraphPromiseArr));
+  
   subgraphPromiseArr = await Promise.all(subgraphPromiseArr);
   subgraphPromiseArr = subgraphPromiseArr.filter(
-    (d:any) => d.tokenPairs.length !== 0
-  );
+    (d: any) => d.tokenPairs.length !== 0
+    );
+    
+    console.log(subgraphPromiseArr)
+
+  // subgraphPromiseArr =await Promise.all(subgraphPromiseArr)
+  // console.log(await Promise.all(subgraphPromiseArr));
 
   for (const data of subgraphPromiseArr) {
     if (allEdges.length === 0) allEdges = [...data.tokenPairs];
     else allEdges = [...allEdges, ...data.tokenPairs];
   }
+
+
+  // console.log(allEdges)
 
   allEdges = allEdges.filter(
     (allEdges: any, index: any, self: any) =>
@@ -90,8 +117,14 @@ export const returnOptimalTradeUsingSubraph = async (
     pairsToken0.push(iterator.token0.id);
     pairsToken1.push(iterator.token1.id);
   }
+
   allNodes = [...new Set(allNodes)];
   allNodesSymbols = [...new Set(allNodesSymbols)];
+
+  // console.log(allNodes)
+  // console.log(allNodesSymbols)
+  // console.log(allEdges)
+
 
   const return_paths = async (token0Sno: any, token1Sno: any) => {
     let v: any;
@@ -201,6 +234,8 @@ export const returnOptimalTradeUsingSubraph = async (
     return [paths_, pathsSymbol_];
   };
 
+  // console.log(return_paths); // consolelog
+
   const sno1 = allNodes.indexOf(from.toLowerCase());
   const sno2 = allNodes.indexOf(to.toLowerCase());
 
@@ -214,6 +249,8 @@ export const returnOptimalTradeUsingSubraph = async (
   } else {
     [available_paths, available_path_tokens_symbol] = [[], []];
   }
+
+  console.log(available_paths)
 
   const getAmountsOut = async (paths: any, amount: any) => {
     let amounts: any = [];
@@ -598,27 +635,22 @@ const noExponents = function (num: any) {
   return str + z;
 };
 
-
-
 async function resultFunction() {
-
   // let xyz = await returnOptimalTradeUsingSubraph(
   //   "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
   //   "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
   //   "1",
   //   true
   // );
+
+
   let xyz = await returnOptimalTradeUsingSubraph(
-    "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
-    "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
-    "2",
+    "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
+    "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+    "20",
     true
   );
   console.log(xyz);
 }
 
-
-resultFunction()
-
-
-
+resultFunction();

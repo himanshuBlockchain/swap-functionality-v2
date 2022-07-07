@@ -145,10 +145,16 @@ export const factoryABI1 : any=[
 //   '0x58f3a3668ba2df13ab510666848dbe38515ccbfb',
 //   '0x95978e39389bddda4cf87db4bb46ec988b1bc029',
 // ]
+// export const popularTokens: any = [
+//   '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', //BNB
+//   '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82', //CAKE
+//   '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', //BUSD
+
+// ]
 export const popularTokens: any = [
-  '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', //BNB
-  '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82', //CAKE
-  '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', //BUSD
+  '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', //BNB
+  '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82', //CAKE
+  '0xe9e7cea3dedca5984780bafc599bd69add087d56', //BUSD
 
 ]
 
